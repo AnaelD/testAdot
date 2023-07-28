@@ -1,14 +1,18 @@
 # testAdot
 test technique pour Adot (Veepee)
-https://github.com/AnaelD/testAdot
 
-Objectif
+## Objectif
+
 Le but est de construire une API REST pour relier des impressions publicitaires et clics à une liste de
-points d'intérêts.
-Fonctionnement
+points d'intérêts. 
+
+Fonctionnement 
+
 L'API doit exposer une route sur laquelle nous enverrons un objet JSON décrivant les points
-d'intérêts.
-Exemple
+d'intérêts. 
+
+Exemple: 
+```json
 [
  {
  "lat": 48.86,
@@ -20,9 +24,11 @@ Exemple
  "lon": 2.3481253,
  "name": "Arc de triomphe"
  }
-]
+] 
+```
 L'API doit relier chacune des impressions et clics présents dans le fichier events.csv au point
-d'intérêt le plus proche, et retourner un résultat sous la forme suivante :
+d'intérêt le plus proche, et retourner un résultat sous la forme suivante : 
+```json
 {
  "Chatelet": {
  "lat": 42.86,
@@ -39,8 +45,19 @@ d'intérêt le plus proche, et retourner un résultat sous la forme suivante :
  "clicks": 7646
  }
 }
-
-Il est à réaliser en TypeScript.
-Il faudrait réaliser au minimum 1 test unitaire.
-Merci de ne pas utiliser le type any.
+```
+Il est à réaliser en TypeScript  
+Il faudrait réaliser au minimum 1 test unitaire  
+Merci de ne pas utiliser le type any  
 La performance est un bonus alors attention :)
+
+**************************************
+
+## Lancement du projet 
+```bash
+npm install  
+npx tsc  
+npm start
+```
+La route pour executer le /POST des POI est :
+http://localhost:8081/interest_points

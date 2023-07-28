@@ -2,7 +2,7 @@ const express = require("express");
 const bodyParser = require('body-parser');
 const config = require('./config');
 const routing = require('./src/routes');
-const events = require('./src/controllers/events');
+import { extractData } from './src/controllers/csvHandler';
 
 /**
  * Create & start Server
@@ -24,4 +24,8 @@ routing.public(app);
 /**
  * Once and Done
  */
-events.readCSV()
+extractData().then(() => {
+    console.log('csv fully charged')
+}).catch((error) => {
+    console.log(error)
+})

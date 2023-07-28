@@ -1,8 +1,10 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 const express = require("express");
 const bodyParser = require('body-parser');
 const config = require('./config');
 const routing = require('./src/routes');
-const events = require('./src/controllers/events');
+const csvHandler_1 = require("./src/controllers/csvHandler");
 /**
  * Create & start Server
  */
@@ -19,4 +21,8 @@ routing.public(app);
 /**
  * Once and Done
  */
-events.readCSV();
+(0, csvHandler_1.extractData)().then(() => {
+    console.log('csv fully charged');
+}).catch((error) => {
+    console.log(error);
+});

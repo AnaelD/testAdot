@@ -1,13 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const fs = require("fs");
-const fastcsv = require('fast-csv');
-// The path to your CSV file
-const csvFilePath = __dirname + '../../../events.csv';
-// Create a Readable Stream from the CSV file
-const stream = fs.createReadStream(csvFilePath);
-// Create a new array to store the CSV data
-const csvData = [];
+const csvHandler_1 = require("./csvHandler");
 function degreesToRadians(degrees) {
     return (degrees * Math.PI) / 180;
 }
@@ -25,25 +18,11 @@ function getDistance(eventLat, eventLon, poiLat, poiLon) {
     // return the distance between the 2 coordinates (event lat,lon & poi lat,lon)
     return earthRadiusKm * c;
 }
-// read & save inside an array the .csv
-const readCSV = async () => {
-    // Parse the CSV data using fast-csv
-    fastcsv.parseStream(stream, { headers: true })
-        .on('data', (row) => {
-        // 'row' contains the data of each row in the CSV file
-        csvData.push(row);
-    })
-        .on('end', () => {
-        // 'csvData' now contains an array of objects representing each row in the CSV file
-        // You can access and process the CSV data as needed here
-        return csvData;
-    })
-        .on('error', (error) => {
-        console.error('Error parsing CSV:', error);
-    });
-};
 // go trough all events & link them to the closests poi
 const getLinkedEvents = async (poiList) => {
+    if (!poiList) {
+        throw new Error('missing the required Points of interest');
+    }
     let linkedPoi = [];
     const callbackFnOne = (event) => {
         let closestPOI = null;
@@ -54,24 +33,26 @@ const getLinkedEvents = async (poiList) => {
                 closestDistance = distance;
                 closestPOI = index;
             }
+            return element;
         };
         // going throug all Poi
         linkedPoi = poiList.map(callbackFnTwo);
         if (event.event_type === 'click') {
             // if click property exist add + 1 to it, if not add the property already set to 1
-            poiList[closestPOI].clicks = (poiList[closestPOI].clicks) ? poiList[closestPOI].clicks + 1 : 1;
+            linkedPoi[closestPOI].clicks = (linkedPoi[closestPOI].clicks) ? linkedPoi[closestPOI].clicks + 1 : 1;
         }
         else {
             // same as above but for imp (impression)
-            poiList[closestPOI].impressions = (poiList[closestPOI].impressions) ? poiList[closestPOI].impressions + 1 : 1;
+            linkedPoi[closestPOI].impressions = (linkedPoi[closestPOI].impressions) ? linkedPoi[closestPOI].impressions + 1 : 1;
         }
     };
+    const csvData = (0, csvHandler_1.getData)();
     // going throug all Event in csvData
     csvData.map(callbackFnOne);
     // return the updated poiList containing number of click & imp per Poi
     return linkedPoi;
 };
 module.exports = {
-    readCSV,
-    getLinkedEvents
+    getLinkedEvents,
+    getDistance
 };
